@@ -10,9 +10,11 @@ intents:
   - bot_challenge
   - lecture_location
   - test_sanic_actions
+  - flight_list
 
 actions:
   - action_hello_world
+  - action_flight_list
 
 responses:
   utter_greet:

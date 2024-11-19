@@ -65,7 +65,41 @@ export class AppComponent implements OnInit {
             return
           }
 
-          rsp.map(msg => msg.image ? `<img src="${msg.image}" width="200">` : msg.text).forEach(msg => {
+          rsp.map(msg => {
+            // Image
+            if (msg.image) {
+              return `<img src="${msg.image}" width="200">`
+            }
+
+            // Flight cards
+            if (msg.attachment) {
+              let html = ''
+              for(const item of msg.attachment) {
+                html+=`
+              <div class="card card-chat">
+                <img src="${[this.webService.getDestinationImage(item.destination)]}" class="card-img-top"
+                    alt="${item.destination}">
+                <div class="card-body">
+                    <h3 class="card-title">${item.destination}</h3>
+                    <p class="card-text">${this.webService.formatDate(item.scheduledAt)} (${item.flightNumber})</p>
+                </div>
+                <div class="card-body">
+                    <a class="btn btn-primary" href="/flight/${item.id}">
+                        <i class="fa-solid fa-up-right-from-square"></i> Details
+                    </a>
+                    <a class="btn btn-success ms-1" href="/list">
+                        <i class="fa-solid fa-magnifying-glass"></i> Browse All
+                    </a>
+                </div>
+              </div>
+              `
+              }
+              return html
+            }
+
+            return msg.text
+          })
+          .forEach(msg => {
             this.pushMessage({
               type: 'bot',
               text: msg!
