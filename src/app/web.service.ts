@@ -57,6 +57,7 @@ export class WebService {
     return this.client.post<RasaModel[]>(url,
       {
         sender: 'ICRNASTAVA',
+        refreshToken: '',
         message: value
       },
       {

@@ -10,7 +10,18 @@ assistant_id: 20241022-104629-icy-meander
 # https://rasa.com/docs/rasa/nlu/components/
 language: en
 
-pipeline: null
+pipeline:
+  - name: WhitespaceTokenizer
+  - name: RegexEntityExtractor
+    case_sensitive: False
+    entity_ranking: true
+  - name: CountVectorsFeaturizer  # Add this Featurizer
+    # Optionally, you can adjust parameters for the featurizer here
+  - name: DIETClassifier
+    epochs: 100  # You can adjust the number of epochs if needed
+  - name: EntitySynonymMapper  # This is useful if you have synonyms for your entities
+
+
 # # No configuration for the NLU pipeline was provided. The following default pipeline was used to train your model.
 # # If you'd like to customize it, uncomment and adjust the pipeline.
 # # See https://rasa.com/docs/rasa/tuning-your-model for more information.

@@ -11,10 +11,23 @@ intents:
   - lecture_location
   - test_sanic_actions
   - flight_list
+  - find_flights_by_destination
 
 actions:
   - action_hello_world
   - action_flight_list
+  - action_flight_list_by_destination
+
+slots:
+  destination:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: destination
+
+entities:
+  - destination
 
 responses:
   utter_greet:

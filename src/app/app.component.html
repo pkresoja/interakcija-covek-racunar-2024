@@ -36,7 +36,7 @@
         <strong>Rasa Chat Bot</strong>
         <button class="btn-close" aria-label="Close" (click)="toggleChat()"></button>
       </div>
-      <div class="card-body chat-body">
+      <div class="card-body chat-body" #chatBody>
         <div *ngFor="let message of messages" class="message mb-2">
           <div *ngIf="message.type === 'user'" class="text-end">
             <div class="badge bg-primary text-white">{{ message.text }}</div>
