@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { WebService } from './web.service';
+import { WebService } from '../services/web.service';
 import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { MessageModel } from '../models/message.model';
 import { RasaModel } from '../models/rasa.model';
 import { NgFor, NgIf } from '@angular/common';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -15,13 +16,16 @@ import { NgFor, NgIf } from '@angular/common';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, AfterViewChecked {
-  webService = WebService.getInstance();
-  title = 'interakcija-covek-racunar-2024';
-  year = new Date().getFullYear();
+  webService = WebService.getInstance()
+  userService = UserService.getInstance()
+  title = 'interakcija-covek-racunar-2024'
+  year = new Date().getFullYear()
 
-  isChatVisible = false;
-  userMessage: string = '';
-  messages: MessageModel[] = [];
+  waitingForResponse = false
+  botThinkingPlaceholder = 'Thinking...'
+  isChatVisible = false
+  userMessage: string = ''
+  messages: MessageModel[] = []
 
   // ViewChild to access the chat-body element directly
   @ViewChild('chatBody', { static: false }) chatBody: ElementRef | undefined;
@@ -51,18 +55,36 @@ export class AppComponent implements OnInit, AfterViewChecked {
   }
 
   pushMessage(message: MessageModel) {
+    if (message.type == 'bot' && message.text == this.botThinkingPlaceholder)
+      this.waitingForResponse = true
+
+    if (message.type == 'bot' && message.text != this.botThinkingPlaceholder) {
+      // Try to find the thinking placeholder message
+      for (let m of this.messages) {
+        if (m.type == 'bot' && m.text == this.botThinkingPlaceholder) {
+          m.text = message.text
+          this.waitingForResponse = false
+          return
+        }
+      }
+    }
+
     this.messages.push(message);
     // Save messages in local storage
     localStorage.setItem('messages', JSON.stringify(this.messages));
   }
 
   sendMessage() {
+    // wating for response, user can't send new messages
+    if (this.waitingForResponse) return
+
     if (this.userMessage.trim()) {
       const trimmedInput = this.userMessage;
       // Reset user input
       this.userMessage = '';
 
       this.pushMessage({ type: 'user', text: trimmedInput });
+      this.pushMessage({ type: 'bot', text: this.botThinkingPlaceholder })
       this.webService.sendRasaMessage(trimmedInput)
         .subscribe((rsp: RasaModel[]) => {
           if (rsp.length == 0) {

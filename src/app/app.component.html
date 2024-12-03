@@ -19,7 +19,16 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="/about">About</a>
           </li>
+          <li class="nav-item" *ngIf="userService.hasActive()">
+            <a class="nav-link" routerLink="/profile">Profile</a>
+          </li>
+          <li class="nav-item" *ngIf="!userService.hasActive()">
+            <a class="nav-link" routerLink="/login">Login</a>
+          </li>
         </ul>
+        <span class="navbar-text" *ngIf="userService.hasActive()">
+          <i class="fa-solid fa-user"></i> {{userService.getActive()}}
+        </span>
       </div>
     </div>
   </nav>

@@ -102,6 +102,8 @@ nlu:
     - give me a default action response
     - i want an action response
     - action test 123
+    - action test
+    - testing actions
 
 - intent: flight_list
   examples: |

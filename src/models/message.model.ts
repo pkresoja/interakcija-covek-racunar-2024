@@ -1,4 +1,4 @@
 export interface MessageModel {
-    type: string
+    type: 'user' | 'bot'
     text: string
 }

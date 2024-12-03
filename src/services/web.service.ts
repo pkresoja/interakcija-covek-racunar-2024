@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { FlightModel } from '../models/flight.model';
 import { PageModel } from '../models/page.model';
 import { RasaModel } from '../models/rasa.model';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -52,12 +53,19 @@ export class WebService {
     return str
   }
 
+  private retrieveRasaSession() {
+    if (!localStorage.getItem('session'))
+      localStorage.setItem('session', uuidv4())
+
+    return localStorage.getItem('session')
+  }
+
   public sendRasaMessage(value: string) {
     const url = 'http://localhost:5005/webhooks/rest/webhook'
     return this.client.post<RasaModel[]>(url,
       {
-        sender: 'ICRNASTAVA',
-        refreshToken: '',
+        sender: this.retrieveRasaSession(),
+        email: localStorage.getItem('active') ? localStorage.getItem('active') : null,
         message: value
       },
       {

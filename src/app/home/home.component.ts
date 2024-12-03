@@ -3,9 +3,9 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, Inject, inject, OnInit } from '@angular/core';
 import { PageModel } from '../../models/page.model';
 import { FlightModel } from '../../models/flight.model';
-import { SafePipe } from '../safe.pipe';
+import { SafePipe } from '../../services/safe.pipe';
 import { RouterLink } from '@angular/router';
-import { WebService } from '../web.service';
+import { WebService } from '../../services/web.service';
 
 @Component({
   selector: 'app-home',

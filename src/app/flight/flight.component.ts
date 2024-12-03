@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FlightModel } from '../../models/flight.model';
-import { WebService } from '../web.service';
+import { WebService } from '../../services/web.service';
 import { NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { SafePipe } from '../safe.pipe';
+import { SafePipe } from '../../services/safe.pipe';
 
 @Component({
   selector: 'app-flight',
