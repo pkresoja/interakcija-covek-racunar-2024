@@ -58,6 +58,55 @@ export class UserService {
     localStorage.setItem('users', JSON.stringify(users))
   }
 
+  public changePassword(newPassword: string) {
+    if (!this.hasActive()) return
+
+    if (!localStorage.getItem('users'))
+      this.createDefault()
+
+    const users: UserModel[] = JSON.parse(localStorage.getItem('users')!)
+    users.forEach(u => {
+      if (u.email == this.getActive()) {
+        u.password = newPassword
+      }
+    })
+
+    localStorage.setItem('users', JSON.stringify(users))
+  }
+
+  public addToCart(flightId: number) {
+    if (!this.hasActive()) return
+
+    if (!localStorage.getItem('users'))
+      this.createDefault()
+
+    const users: UserModel[] = JSON.parse(localStorage.getItem('users')!)
+    users.forEach(u => {
+      if (u.email == this.getActive()) {
+        u.flights.push({
+          id: flightId,
+          status: 'reserved',
+          rating: null
+        })
+      }
+    })
+
+    localStorage.setItem('users', JSON.stringify(users))
+  }
+
+  public getUserOrders() {
+    if (!this.hasActive()) return
+
+    if (!localStorage.getItem('users'))
+      this.createDefault()
+
+    const users: UserModel[] = JSON.parse(localStorage.getItem('users')!)
+    const active = users.find(u => u.email == this.getActive())
+
+    if (!active) throw Error('NO ACTIVE USER')
+    return active.flights
+  }
+
   public hasActive() {
     return localStorage.getItem('active') != null
   }

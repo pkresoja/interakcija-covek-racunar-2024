@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { WebService } from '../services/web.service';
 import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { MessageModel } from '../models/message.model';
@@ -30,7 +30,12 @@ export class AppComponent implements OnInit, AfterViewChecked {
   // ViewChild to access the chat-body element directly
   @ViewChild('chatBody', { static: false }) chatBody: ElementRef | undefined;
 
-  constructor() { }
+  constructor(private router: Router, private route: ActivatedRoute) { }
+
+  public doLogout() {
+    this.userService.logout()
+    this.router.navigate(['/login'], { relativeTo: this.route })
+  }
 
   ngOnInit(): void {
     // Check if there are any messages saved

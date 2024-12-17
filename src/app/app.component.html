@@ -22,6 +22,9 @@
           <li class="nav-item" *ngIf="userService.hasActive()">
             <a class="nav-link" routerLink="/profile">Profile</a>
           </li>
+          <li class="nav-item" *ngIf="userService.hasActive()">
+            <button class="nav-link" type="button" (click)="doLogout()">Logout</button>
+          </li>
           <li class="nav-item" *ngIf="!userService.hasActive()">
             <a class="nav-link" routerLink="/login">Login</a>
           </li>
