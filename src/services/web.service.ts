@@ -39,6 +39,15 @@ export class WebService {
     return this.client.get<FlightModel>(url)
   }
 
+  public getFlightsByIds(ids: number[]) {
+    const url = `${this.baseUrl}/flight/list`
+    return this.client.post<FlightModel[]>(url, ids, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+  }
+
   public getDestinationImage(dest: string) {
     return 'https://img.pequla.com/destination/' + dest.split(" ")[0].toLowerCase() + '.jpg'
   }
@@ -48,7 +57,7 @@ export class WebService {
     return new Date(iso).toLocaleString('sr-RS')
   }
 
-  public formatValue(str: string | null) {
+  public formatValue(str: any | null) {
     if (str == null) return 'N/A'
     return str
   }

@@ -47,9 +47,12 @@
                 <td>{{webService.formatDate(flight.estimatedAt)}}</td>
                 <td>
                     <div class="btn-group">
-                        <a routerLink="/flight/{{flight.id}}" class="btn btn-primary">
+                        <a routerLink="/flight/{{flight.id}}" class="btn btn-sm btn-primary btn-table">
                             <i class="fa-solid fa-up-right-from-square"></i> Details
                         </a>
+                        <button type="button" class="btn btn-sm btn-success btn-table" (click)="doAddToCart(flight.id)">
+                            <i class="fa-solid fa-cart-shopping"></i> Add to cart
+                        </button>
                     </div>
                 </td>
             </tr>

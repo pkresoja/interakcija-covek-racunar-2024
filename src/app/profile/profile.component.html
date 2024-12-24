@@ -17,19 +17,45 @@
     </button>
 </div>
 
-<table class="table table-striped" *ngIf="userService.getUserOrders()">
+<table class="table table-striped" *ngIf="orders[0].flight">
     <thead>
         <tr>
             <th scope="col"><i class="fa-solid fa-hashtag"></i> Id</th>
-            <th scope="col"><i class="fa-solid fa-table"></i> Status</th>
+            <th scope="col"><i class="fa-solid fa-table"></i> Flight Number</th>
+            <th scope="col"><i class="fa-solid fa-location-dot"></i> Destination</th>
+            <th scope="col"><i class="fa-solid fa-calendar-days"></i> Scheduled At</th>
+            <th scope="col"><i class="fa-solid fa-comment"></i> Status</th>
+            <th scope="col"><i class="fa-solid fa-star"></i> Rating</th>
             <th scope="col"><i class="fa-solid fa-link"></i> Actions</th>
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let order of userService.getUserOrders()">
+        <tr *ngFor="let order of orders">
             <th scope="row">{{order.id}}</th>
-            <td>{{order.status}}</td>
-            <td>{{order.rating?order.rating:'null'}}</td>
+            <td>{{order.flight?.flightNumber}}</td>
+            <td>{{order.flight?.destination}}</td>
+            <td>
+                {{webService.formatDate(order.flight!.estimatedAt?order.flight!.estimatedAt:order.flight!.scheduledAt)}}
+            </td>
+            <td>{{order.status.toUpperCase()}}</td>
+            <td>{{webService.formatValue(order.rating)}}</td>
+            <td>
+                <div class="btn-group">
+                    <button (click)="details(order.id)" type="button" class="btn btn-sm btn-primary btn-table-sm">
+                        <i class="fa-solid fa-up-right-from-square"></i> Details
+                    </button>
+                    <button (click)="pay(order)" type="button" class="btn btn-sm btn-success btn-table-sm"
+                        *ngIf="order.status == 'reserved'">
+                        <i class="fa-solid fa-money-bill"></i> Pay
+                    </button>
+                    <button (click)="rate(order)" type="button" class="btn btn-sm btn-secondary btn-table-sm" *ngIf="order.status == 'paid'">
+                        <i class="fa-solid fa-star"></i> Rate
+                    </button>
+                    <button (click)="cancel(order)" type="button" class="btn btn-sm btn-danger btn-table-sm" *ngIf="order.status == 'reserved'">
+                        <i class="fa-solid fa-ban"></i> Cancel
+                    </button>
+                </div>
+            </td>
         </tr>
     </tbody>
 </table>

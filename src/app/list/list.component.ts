@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { WebService } from '../../services/web.service';
 import { PageModel } from '../../models/page.model';
 import { FlightModel } from '../../models/flight.model';
 import { NgFor, NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-list',
@@ -16,10 +17,12 @@ import { HttpClientModule } from '@angular/common/http';
 export class ListComponent {
 
   public webService: WebService
+  public userService: UserService
   public data: PageModel<FlightModel> | null = null
 
-  constructor() {
+  constructor(private router: Router, private route: ActivatedRoute) {
     this.webService = WebService.getInstance()
+    this.userService = UserService.getInstance()
     this.getFlightData()
   }
 
@@ -48,6 +51,17 @@ export class ListComponent {
     if (this.data == undefined) return
     if (this.data.last) return
     this.getFlightData(this.data.totalPages - 1)
+  }
+
+  public doAddToCart(id: number) {
+    if (!this.userService.hasActive()) {
+      alert('You have to be signed in!')
+      this.router.navigate(['/login'], { queryParams: { from: '/flight/' + id }, relativeTo: this.route });
+      return
+    }
+
+    this.userService.addToCart(id)
+    this.router.navigate(['/profile'], { relativeTo: this.route })
   }
 
 }

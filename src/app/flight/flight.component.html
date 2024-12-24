@@ -32,7 +32,7 @@
             <strong>Estimated At:</strong> {{webService.formatDate(flight.estimatedAt)}}
           </li>
           <li class="list-group-item" *ngIf="flight.connectedType != '0'">
-            <strong>Connected Flight:</strong> {{webService.formatDate(flight.connectedFlight)}}
+            <strong>Connected Flight:</strong> {{webService.formatValue(flight.connectedFlight)}}
           </li>
           <li class="list-group-item">
             <strong>Plane Model:</strong> {{webService.formatValue(flight.plane)}}

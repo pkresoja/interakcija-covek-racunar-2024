@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UserModel } from '../models/user.model';
+import { UserModel, UserOrderModel } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -86,7 +86,8 @@ export class UserService {
         u.flights.push({
           id: flightId,
           status: 'reserved',
-          rating: null
+          rating: null,
+          created: new Date().getTime().toString()
         })
       }
     })
@@ -105,6 +106,25 @@ export class UserService {
 
     if (!active) throw Error('NO ACTIVE USER')
     return active.flights
+  }
+
+  public changeOrderStatus(status: 'reserved' | 'paid' | 'canceled', order: UserOrderModel) {
+    if (!this.hasActive()) return
+
+    if (!localStorage.getItem('users'))
+      this.createDefault()
+
+    const users: UserModel[] = JSON.parse(localStorage.getItem('users')!)
+    const active = users.find(u => u.email == this.getActive())
+
+    if (!active) throw Error('NO ACTIVE USER')
+    active.flights.forEach(a => {
+      if (a.created == order.created) {
+        a.status = status
+      }
+    })
+
+    localStorage.setItem('users', JSON.stringify(users))
   }
 
   public hasActive() {
