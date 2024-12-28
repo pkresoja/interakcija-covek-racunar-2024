@@ -10,6 +10,6 @@ export interface UserOrderModel {
     id: number,
     flight?: FlightModel
     status: 'reserved' | 'paid' | 'canceled'
-    rating: number | null
+    rating: 'l' | 'd' | 'na'
     created: string
 }

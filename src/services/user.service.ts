@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserModel, UserOrderModel } from '../models/user.model';
+import { AlertService } from './alert.service';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +37,11 @@ export class UserService {
     const users: UserModel[] = JSON.parse(localStorage.getItem('users')!)
     const active = users.find(u => u.email == email && u.password == password)
 
-    if (!active) throw Error('BAD_USERNAME_OR_PASSWORD')
+    if (!active) {
+      AlertService.error('Login Failed', 'Username or password is incorrect!')
+      return
+    }
+
     localStorage.setItem('active', active.email)
   }
 
@@ -59,7 +64,10 @@ export class UserService {
   }
 
   public changePassword(newPassword: string) {
-    if (!this.hasActive()) return
+    if (!this.hasActive()) {
+      AlertService.error('Password change failed', 'You need to be signed in to change your password!')
+      return
+    }
 
     if (!localStorage.getItem('users'))
       this.createDefault()
@@ -75,7 +83,10 @@ export class UserService {
   }
 
   public addToCart(flightId: number) {
-    if (!this.hasActive()) return
+    if (!this.hasActive()) {
+      AlertService.error('You have to be logged in', 'You need to be signed in order to add items to the cart!')
+      return
+    }
 
     if (!localStorage.getItem('users'))
       this.createDefault()
@@ -86,7 +97,7 @@ export class UserService {
         u.flights.push({
           id: flightId,
           status: 'reserved',
-          rating: null,
+          rating: 'na',
           created: new Date().getTime().toString()
         })
       }
@@ -96,7 +107,10 @@ export class UserService {
   }
 
   public getUserOrders() {
-    if (!this.hasActive()) return
+    if (!this.hasActive()) {
+      AlertService.error('Orders failed to load', 'You need to be signed in to browse or change your orders!')
+      return
+    }
 
     if (!localStorage.getItem('users'))
       this.createDefault()
@@ -109,7 +123,10 @@ export class UserService {
   }
 
   public changeOrderStatus(status: 'reserved' | 'paid' | 'canceled', order: UserOrderModel) {
-    if (!this.hasActive()) return
+    if (!this.hasActive()) {
+      AlertService.error('Order failed to change', 'You need to be signed in to browse or change your orders!')
+      return
+    }
 
     if (!localStorage.getItem('users'))
       this.createDefault()
@@ -117,10 +134,42 @@ export class UserService {
     const users: UserModel[] = JSON.parse(localStorage.getItem('users')!)
     const active = users.find(u => u.email == this.getActive())
 
-    if (!active) throw Error('NO ACTIVE USER')
+    if (!active) {
+      AlertService.error('Order status failed to change', 'You need to be signed in to browse or change your orders!')
+      return
+    }
+
     active.flights.forEach(a => {
       if (a.created == order.created) {
         a.status = status
+      }
+    })
+
+    localStorage.setItem('users', JSON.stringify(users))
+  }
+
+  public changeOrderRating(rating: 'na' | 'l' | 'd', order: UserOrderModel) {
+    if (!this.hasActive()) {
+      AlertService.error('Order failed to change', 'You need to be signed in to browse or change your orders!')
+      return
+    }
+
+    if (!localStorage.getItem('users'))
+      this.createDefault()
+
+    if (order.status !== 'paid') return // ovo je izuzetak, ne sme da se oceni dok nije placeno
+
+    const users: UserModel[] = JSON.parse(localStorage.getItem('users')!)
+    const active = users.find(u => u.email == this.getActive())
+
+    if (!active) {
+      AlertService.error('Order rating failed to change', 'You need to be signed in to browse or change your orders!')
+      return
+    }
+
+    active.flights.forEach(a => {
+      if (a.created == order.created) {
+        a.rating = rating
       }
     })
 

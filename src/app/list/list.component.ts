@@ -6,6 +6,7 @@ import { FlightModel } from '../../models/flight.model';
 import { NgFor, NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { UserService } from '../../services/user.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-list',
@@ -54,14 +55,19 @@ export class ListComponent {
   }
 
   public doAddToCart(id: number) {
-    if (!this.userService.hasActive()) {
-      alert('You have to be signed in!')
-      this.router.navigate(['/login'], { queryParams: { from: '/flight/' + id }, relativeTo: this.route });
-      return
-    }
+    AlertService.question('Add to cart', `Do you want to add flight ${id} to cart?`)
+      .then(rsp => {
+        if (rsp.isConfirmed) {
+          if (!this.userService.hasActive()) {
+            AlertService.error('You have to be signed in', 'You cant add flights to the cart if you are not signed in!')
+            this.router.navigate(['/login'], { queryParams: { from: '/flight/' + id }, relativeTo: this.route });
+            return
+          }
 
-    this.userService.addToCart(id)
-    this.router.navigate(['/profile'], { relativeTo: this.route })
+          this.userService.addToCart(id)
+          this.router.navigate(['/profile'], { relativeTo: this.route })
+        }
+      })
   }
 
 }

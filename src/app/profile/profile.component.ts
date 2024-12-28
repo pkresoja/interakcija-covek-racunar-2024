@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
 import { WebService } from '../../services/web.service';
 import { UserOrderModel } from '../../models/user.model';
+import Swal from 'sweetalert2';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-profile',
@@ -47,7 +49,7 @@ export class ProfileComponent {
   public doResetPassword() {
     const input = prompt('Enter your new password')
     if (input == null) {
-      alert('Password cannot be empty')
+      AlertService.error('Password reset failed','Password cannot be empty!')
       return
     }
 
@@ -65,6 +67,36 @@ export class ProfileComponent {
 
   public rate(order: UserOrderModel) {
     // TODO: Implemenitrati rating
+    Swal.fire({
+      title: 'Leave a rating',
+      text: 'Did you enjoy flying with us?',
+      icon: 'question',
+      showCancelButton: true,
+      showDenyButton: true,
+      confirmButtonText: '<i class="fa-solid fa-thumbs-up"></i>',
+      cancelButtonText: 'cancel',
+      denyButtonText: '<i class="fa-solid fa-thumbs-down"></i>',
+      customClass: {
+        popup: 'card',
+        confirmButton: 'btn btn-success',
+        denyButton: 'btn btn-danger',
+        cancelButton: 'btn btn-primary'
+      }
+    }).then(res => {
+      if (res.isConfirmed) {
+        // Korinsik je zadovoljan
+        this.userService.changeOrderRating('l', order)
+        this.loadOrders()
+        return
+      }
+
+      if (res.isDenied) {
+        // Korinsik je nezadovoljan
+        this.userService.changeOrderRating('d', order)
+        this.loadOrders()
+        return
+      }
+    })
   }
 
   public cancel(order: UserOrderModel) {
